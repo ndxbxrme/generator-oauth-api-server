@@ -1,0 +1,7 @@
+<form novalidate ng-submit="login()" ng-hide="user.details">
+</form>
+
+<div ng-show="user.details">
+  {{user.details.twitter.username}} {{user.details.google.name}}
+  <a ng-click="logout()">Log out</a>
+</div>
