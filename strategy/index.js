@@ -85,6 +85,13 @@ var OauthApiServerGenerator = yeoman.generators.NamedBase.extend({
     else {
       rewriteFile('app/views/login.html', /<\/form>/, '  <a href="/api/' + this.name + '" target="_self">' + this._.humanize(this.name) + '</a>\r\n</form>'); 
     }
+    
+    if(this.name==='local') {
+      
+    }
+    else {
+      
+    }
     //console.log(passportJs);
     //this.src.copy('somefile.js', 'somefile.js');
   },

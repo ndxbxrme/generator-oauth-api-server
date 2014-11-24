@@ -8,6 +8,6 @@
  * Controller of the myApp
  */
 angular.module('<%= appName %>')
-  .controller('ProfileCtrl', function ($scope) {
-    $scope.data = 'hey';
+  .controller('ProfileCtrl', function ($scope, User) {
+    $scope.user = User;
   });

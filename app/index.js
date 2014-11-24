@@ -214,7 +214,7 @@ var OauthApiServerGenerator = yeoman.generators.Base.extend({
       //angular bits
       var routeSplice = this.src.read('angular/_routecheck.js');
       rewriteFile('app/scripts/app.js', /  \.config\(function \(\$routeProvider\) {/, routeSplice);
-      var loginRoute = '      .when(\'/\', {\n        templateUrl: \'views/main.html\',\n        controller: \'MainCtrl\',\n        resolve: {isLoggedIn:softLogin}\n      })\n      .when(\'/login\', {\n        templateUrl: \'views/login.html\',\n        controller: \'LoginCtrl\',\n        resolve: {isLoggedIn:softLogin}\n      })\n      .when(\'/profile\', {\n        templateUrl: \'views/profile.html\',\n        controller: \'ProfileCtrl\',\n        resolve: {isLoggedIn:checkLogin}\n      })\n      .otherwise({';
+      var loginRoute = '      .when(\'/\', {\n        templateUrl: \'views/main.html\',\n        controller: \'MainCtrl\',\n        resolve: {isLoggedIn:softLogin}\n      })\n      .when(\'/login\', {\n        templateUrl: \'views/login.html\',\n        controller: \'LoginCtrl\',\n        resolve: {isLoggedIn:softLogin}\n      })\n      .when(\'/profile\', {\n        templateUrl: \'views/profile.html\',\n        controller: \'ProfileCtrl\',\n        resolve: {isLoggedIn:checkLogin}\n      })';
       rewriteFile('app/scripts/app.js', /      \.when\('\/', {\n        templateUrl: 'views\/main.html',\n        controller: 'MainCtrl'\n      }\)/, loginRoute);
 
       this.dest.mkdir('app/scripts/services');
