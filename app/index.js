@@ -3,7 +3,8 @@ var util = require('util'),
     path = require('path'),
     yeoman = require('yeoman-generator'),
     yosay = require('yosay'),
-    fs = require('fs');
+    fs = require('fs'),
+    misUtils = require('../mis-utils');
 
 var OauthApiServerGenerator = yeoman.generators.Base.extend({
   initializing: function () {
@@ -122,13 +123,6 @@ var OauthApiServerGenerator = yeoman.generators.Base.extend({
   writing: {
     app: function () {
       var context = {appName:'myApp'};
-      function rewriteFile(filename, hook, splice, checkFor) {
-        var text = fs.readFileSync(filename);
-        if(!checkFor || !text.match(checkFor)) {
-          text = text.toString().replace(hook, splice);
-          fs.writeFileSync(filename, text);
-        }
-      }
       if(this.dest.exists('package.json')) {
         var srcPkg = JSON.parse(fs.readFileSync('package.json'));
         context.appName = srcPkg.name + 'App';
@@ -213,9 +207,9 @@ var OauthApiServerGenerator = yeoman.generators.Base.extend({
       
       //angular bits
       var routeSplice = this.src.read('angular/_routecheck.js');
-      rewriteFile('app/scripts/app.js', /  \.config\(function \(\$routeProvider\) {/, routeSplice);
+      misUtils.rewriteFile('app/scripts/app.js', /  \.config\(function \(\$routeProvider\) {/, routeSplice);
       var loginRoute = '      .when(\'/\', {\n        templateUrl: \'views/main.html\',\n        controller: \'MainCtrl\',\n        resolve: {isLoggedIn:softLogin}\n      })\n      .when(\'/login\', {\n        templateUrl: \'views/login.html\',\n        controller: \'LoginCtrl\',\n        resolve: {isLoggedIn:softLogin}\n      })\n      .when(\'/profile\', {\n        templateUrl: \'views/profile.html\',\n        controller: \'ProfileCtrl\',\n        resolve: {isLoggedIn:checkLogin}\n      })';
-      rewriteFile('app/scripts/app.js', /      \.when\('\/', {\n        templateUrl: 'views\/main.html',\n        controller: 'MainCtrl'\n      }\)/, loginRoute);
+      misUtils.rewriteFile('app/scripts/app.js', /      \.when\('\/', {\n        templateUrl: 'views\/main.html',\n        controller: 'MainCtrl'\n      }\)/, loginRoute);
 
       this.dest.mkdir('app/scripts/services');
       this.dest.mkdir('app/fonts');
@@ -227,13 +221,15 @@ var OauthApiServerGenerator = yeoman.generators.Base.extend({
       this.template('angular/services/_user.js', 'app/scripts/services/user.js', context);
       this.template('angular/views/_login.html', 'app/views/login.html', {strategies:this.strategies});
       this.template('angular/views/_profile.html', 'app/views/profile.html', {strategies:this.strategies});
+      this.src.copy('angular/views/_main.html', 'app/views/main.html');
+      this.src.copy('angular/styles/_styles.scss', 'app/styles/styles.scss');
       this.src.copy('angular/_gruntfile.js', 'Gruntfile.js');
       
       //clean up index file
       var metasHtml = this.src.read('angular/_metas.html');
-      rewriteFile('app/index.html', /    <meta name="viewport" content="width=device-width">/, metasHtml);
-      rewriteFile('app/index.html', /<div(.|[\r\n])+<\/div>/, '<div class="container" ng-controller="NavCtrl">\r\n      <a href="/login" ng-hide="user.user">Login</a>\r\n      <a href="api/logout" target="_self" ng-show="user.user">Logout</a>\r\n      <div ng-view=""></div>\r\n    </div>');
-      rewriteFile('app/index.html', /        <!-- endbuild -->/, '        <script src="scripts/controllers/login.js"></script>\r\n        <script src="scripts/controllers/nav.js"></script>\r\n        <script src="scripts/controllers/profile.js"></script>\r\n        <script src="scripts/services/user.js"></script>\r\n        <!-- endbuild -->');
+      misUtils.rewriteFile('app/index.html', /    <meta name="viewport" content="width=device-width">/, metasHtml);
+      misUtils.rewriteFile('app/index.html', /<div(.|[\r\n])+<\/div>/, '<div class="container" ng-controller="NavCtrl">\r\n      <a href="/login" ng-hide="user.user">Login</a>\r\n      <a href="api/logout" target="_self" ng-show="user.user">Logout</a>\r\n      <div ng-view=""></div>\r\n    </div>');
+      misUtils.rewriteFile('app/index.html', /        <!-- endbuild -->/, '        <script src="scripts/controllers/login.js"></script>\r\n        <script src="scripts/controllers/nav.js"></script>\r\n        <script src="scripts/controllers/profile.js"></script>\r\n        <script src="scripts/services/user.js"></script>\r\n        <!-- endbuild -->');
     },
 
     projectfiles: function () {
